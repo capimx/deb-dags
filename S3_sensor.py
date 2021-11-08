@@ -3,7 +3,8 @@ S3 Sensor Connection Test
 """
 
 from airflow import DAG
-from airflow.operators import BashOperator,  S3KeySensor
+from airflow.operators.bash import BashOperator
+from airflow.providers.amazon.aws.sensors.s3_key import S3KeySensor
 from datetime import datetime, timedelta
 
 default_args = {
