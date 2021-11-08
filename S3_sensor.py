@@ -2,6 +2,7 @@
 S3 Sensor Connection Test
 """
 
+import airflow.utils.dates
 from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.providers.amazon.aws.sensors.s3_key import S3KeySensor
@@ -10,7 +11,8 @@ from datetime import datetime, timedelta
 default_args = {
     'owner': 'capimx',    
     'retries': 5,
-    'retry_delay': timedelta(minutes=5)
+    'retry_delay': timedelta(minutes=5),
+    'start_date': airflow.utils.dates.days_ago(1)
 }
 
 dag = DAG('s3_sensor', default_args=default_args, schedule_interval= '@once')
