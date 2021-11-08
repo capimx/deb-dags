@@ -54,13 +54,13 @@ class S3ToPostgresTransfer(BaseOperator):
     def execute(self, context):
         
         # Create an instances to connect S3 and Postgres DB.
-        self.log.info(self.aws_conn_postgres_id)   
+        #self.log.info(self.aws_conn_postgres_id)   
         
         self.pg_hook = PostgresHook(postgre_conn_id = self.aws_conn_postgres_id)
         self.s3 = S3Hook(aws_conn_id = self.aws_conn_id, verify = self.verify)
 
-        self.log.info("Downloading S3 file")
-        self.log.info(self.s3_key + ', ' + self.s3_bucket)
+        #self.log.info("Downloading S3 file")
+        #self.log.info(self.s3_key + ', ' + self.s3_bucket)
 
         # Validate if the file source exist or not in the bucket.
         if self.wildcard_match:
@@ -99,20 +99,20 @@ class S3ToPostgresTransfer(BaseOperator):
                          #parse_dates=date_cols,                                             
                          dtype=schema                         
                          )
-        self.log.info(df_products)
-        self.log.info(df_products.info())
+        #self.log.info(df_products)
+        #self.log.info(df_products.info())
 
         # formatting and converting the dataframe object in list to prepare the income of the next steps.
         df_products = df_products.replace(r"[\"]", r"'")
         list_df_products = df_products.values.tolist()
         list_df_products = [tuple(x) for x in list_df_products]
-        self.log.info(list_df_products)   
+        #self.log.info(list_df_products)   
        
         # Read the file with the DDL SQL to create the table products in postgres DB.
         nombre_de_archivo = "bootcampdb.purchases.sql"
         
         ruta_archivo = '/usr/local/airflow/custom_modules/assets' + os.path.sep + nombre_de_archivo
-        self.log.info(ruta_archivo)
+        #self.log.info(ruta_archivo)
         proposito_del_archivo = "r" #r es de Lectura
         codificación = "UTF-8" #Tabla de Caracteres,
                                #ISO-8859-1 codificación preferidad por
@@ -125,7 +125,7 @@ class S3ToPostgresTransfer(BaseOperator):
             manipulador_de_archivo.close()
 
             #Display the content 
-            self.log.info(SQL_COMMAND_CREATE_TBL)    
+            #self.log.info(SQL_COMMAND_CREATE_TBL)    
 
         # execute command to create table in postgres.  
         self.pg_hook.run(SQL_COMMAND_CREATE_TBL)  
@@ -150,14 +150,14 @@ class S3ToPostgresTransfer(BaseOperator):
 
         # Query and print the values of the table products in the console.
         self.request = 'SELECT * FROM ' + self.current_table
-        self.log.info(self.request)
+        #self.log.info(self.request)
         self.connection = self.pg_hook.get_conn()
         self.cursor = self.connection.cursor()
         self.cursor.execute(self.request)
         self.sources = self.cursor.fetchall()
-        self.log.info(self.sources)
+        #self.log.info(self.sources)
 
-        for source in self.sources:           
+        """ for source in self.sources:           
             self.log.info("InvoiceNo: {0} - \
                            StockCode: {1} - \
                            Description: {2} - \
@@ -168,3 +168,4 @@ class S3ToPostgresTransfer(BaseOperator):
                            Country: {7} ".format(source[0],source[1],source[2],source[3],source[4],source[5], 
                                                    source[6],
                                                    source[7]))                                                  
+ """
