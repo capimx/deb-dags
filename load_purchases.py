@@ -21,7 +21,7 @@ process_dag = S3ToPostgresTransfer(
     s3_bucket = 'deb-capstone',
     s3_key =  'user_purchase.csv',
     aws_conn_postgres_id = 'postgres_default',
-    aws_conn_id = 'aws_default',   
+    aws_conn_id = 'aws_s3_default',   
     dag = dag
 )
 
