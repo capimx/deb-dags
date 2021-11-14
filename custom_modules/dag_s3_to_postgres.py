@@ -23,7 +23,7 @@ class S3ToPostgresTransfer(BaseOperator):
 
     ui_color = '#ededed'
 
-    @apply_defaults
+    @apply_defaults #Try removing this
     def __init__(
             self,
             schema,
