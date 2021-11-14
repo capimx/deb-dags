@@ -15,7 +15,7 @@ default_args = {
 dag = DAG('transfer_purchases', default_args = default_args, schedule_interval = '@daily')
 
 process_dag = S3CsvToPostgresOperator(
-    task_id = 'dag_s3_to_postgres',
+    task_id = 'dag_s3_csv_to_postgres',
     schema = 'bootcampdb',
     table= 'products',
     s3_bucket = 'deb-capstone',
