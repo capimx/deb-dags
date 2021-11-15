@@ -62,7 +62,7 @@ def locate_file():
     # 
     list_srt_content = s3_key_object.get()['Body'].read().decode(encoding = "utf-8", errors = "ignore")
     bytes_buffer = io.BytesIO()
-    s3.download_fileobj(Bucket=s3_bucket, Key=s3_key, Fileobj=bytes_buffer)
+    s3.download_file(Bucket=s3_bucket, Key=s3_key, Fileobj=bytes_buffer)
     file = bytes_buffer.getvalue().decode()
 
     query = f"""COPY %s FROM STDIN \
