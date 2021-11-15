@@ -67,7 +67,7 @@ def locate_file():
 
     query = f"""COPY %s FROM STDIN \
             WITH (FORMAT csv, DELIMITER ',', QUOTE '"', HEADER TRUE)"""
-    pg_hook.copy_expert(query % table, file=file)
+    pg_hook.copy_expert(query % table, file)
     print("Finito")
     #Insert rows
     """ list_target_fields = ['InvoiceNo', 
