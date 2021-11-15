@@ -8,6 +8,7 @@ import logging
 
 # The DAG object; we'll need this to instantiate a DAG
 from airflow import DAG
+import pandas as pd
 
 # Operators; we need this to operate!
 #from custom_modules.dag_s3_to_postgres import S3ToPostgresTransfer
@@ -60,17 +61,9 @@ def locate_file():
     #curr = pg_hook.get_conn().cursor()
 
     # 
-    file = s3_key_object.get()['Body'].read().decode(encoding = "utf-8", errors = "ignore")
-    """ bytes_buffer = io.BytesIO()
-    s3.download_file(Bucket=s3_bucket, Key=s3_key, Fileobj=bytes_buffer)
-    file = bytes_buffer.getvalue().decode() """
-
-    query = f"""COPY %s FROM STDIN \
-            WITH (FORMAT csv, DELIMITER ',', QUOTE '"', HEADER TRUE)"""
-    pg_hook.copy_expert(query % table, file)
-    print("Finito")
-    #Insert rows
-    """ list_target_fields = ['InvoiceNo', 
+    file_content = s3_key_object.get()['Body'].read().decode(encoding = "utf-8", errors = "ignore")
+  
+    list_target_fields = [    'InvoiceNo', 
                               'StockCode',
                               'Description', 
                               'Quantity', 
@@ -79,16 +72,43 @@ def locate_file():
                               'CustomerID', 
                               'Country'
                               ]
-   
+    # schema definition for data types of the source.
+    schema = {
+                'InvoiceNo': 'string',
+                'StockCode': 'string',
+                'Description': 'string',
+                'Quantity': 'string',
+                'InvoiceDate': 'string',
+                'UnitPrice': 'float64',                                
+                'CustomerID': 'int64',
+                'Country': 'string'
+                }  
+    date_cols = ['fechaRegistro']         
 
+    # read a csv file with the properties required.
+    df_products = pd.read_csv(io.StringIO(file_content), 
+                        header=0, 
+                        delimiter=",",
+                        quotechar='"',
+                        low_memory=False,
+                        #parse_dates=date_cols,                                             
+                        dtype=schema                         
+                        )
+    # Reformat df
+    df_products = df_products.replace(r"[\"]", r"'")
+    list_df_products = df_products.values.tolist()
+    list_df_products = [tuple(x) for x in list_df_products]
     current_table = schema + '.' + table
+
+    #Insert rows
     pg_hook.insert_rows(current_table,  
                                 list_df_products, 
                                 target_fields = list_target_fields, 
                                 commit_every = 1000,
-                                replace = False) """
-
-
+                                replace = False) 
+   
+    print("Finish")   
+    
 
 start_task = DummyOperator(task_id="start", dag=dag)
 
