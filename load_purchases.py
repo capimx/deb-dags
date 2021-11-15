@@ -98,7 +98,7 @@ locate_file_task = PythonOperator (
     dag=dag
 )
 
-create_table_task = PythonOperator() #ToDo finish this.
+#create_table_task = PythonOperator() #ToDo finish this.
 
 end_task   = DummyOperator(task_id="end", dag=dag)
 
