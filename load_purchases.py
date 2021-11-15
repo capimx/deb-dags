@@ -57,7 +57,7 @@ def locate_file():
     
     # Create table
     pg_hook.run(create_table_cmd)
-    curr = pg_hook.cursor("cursor")
+    #curr = pg_hook.get_conn().cursor()
 
     # 
     list_srt_content = s3_key_object.get()['Body'].read().decode(encoding = "utf-8", errors = "ignore")
