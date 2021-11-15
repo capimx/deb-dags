@@ -9,7 +9,7 @@ import logging
 from airflow import DAG
 
 # Operators; we need this to operate!
-from custom_modules.dag_s3_to_postgres import S3ToPostgresTransfer
+#from custom_modules.dag_s3_to_postgres import S3ToPostgresTransfer
 
 default_args = {
     'owner': 'capimx',
@@ -48,14 +48,15 @@ def locate_file():
     print(message)
 
 
-start_task = DummyOperator(task_id="start")
-end_task   = DummyOperator(task_id="end")
+start_task = DummyOperator(task_id="start", dag=dag)
 
 locate_file_task = PythonOperator (
     task_id='locate_file',
-    python_callable=locate_file
+    python_callable=locate_file, 
+    dag=dag
 )
 
+end_task   = DummyOperator(task_id="end", dag=dag)
 
 
 start_task >> locate_file_task >> end_task
