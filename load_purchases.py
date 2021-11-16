@@ -80,7 +80,7 @@ def locate_file():
                 'Quantity': 'string',
                 'InvoiceDate': 'string',
                 'UnitPrice': 'float64',                                
-                'CustomerID': 'int64',
+                'CustomerID': 'string',
                 'Country': 'string'
                 }  
     date_cols = ['fechaRegistro']         
@@ -108,7 +108,7 @@ def locate_file():
                                 replace = False) 
    
     print("Finish")   
-    
+
 
 start_task = DummyOperator(task_id="start", dag=dag)
 
