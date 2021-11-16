@@ -98,7 +98,7 @@ def locate_file():
     df_products = df_products.replace(r"[\"]", r"'")
     list_df_products = df_products.values.tolist()
     list_df_products = [tuple(x) for x in list_df_products]
-    current_table = schema + '.' + table
+    current_table = "dbname" + '.' + "user_purchases"
 
     #Insert rows
     pg_hook.insert_rows(current_table,  
