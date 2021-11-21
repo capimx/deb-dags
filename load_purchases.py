@@ -23,7 +23,7 @@ dag = DAG('load_purchases_new', default_args = default_args, schedule_interval =
 
 create_table_cmd = """
 
-CREATE TABLE IF NOT EXISTS dbname.user_purchases (
+CREATE TABLE IF NOT EXISTS user_purchases (
    invoiceNo INT PRIMARY KEY,
    StockCode VARCHAR(20),
    Description VARCHAR(70),
@@ -99,7 +99,7 @@ def locate_file():
     df_products = df_products.replace(r"[\"]", r"'")
     list_df_products = df_products.values.tolist()
     list_df_products = [tuple(x) for x in list_df_products]
-    current_table = "dbname" + '.' + "user_purchases"
+    current_table = "user_purchases"
 
     #Insert rows
     pg_hook.insert_rows(current_table,  
