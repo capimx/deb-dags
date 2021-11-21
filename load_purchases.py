@@ -25,7 +25,7 @@ create_table_cmd = """
 DROP TABLE user_purchases;
 CREATE TABLE IF NOT EXISTS user_purchases (
    purchaseId SERIAL PRIMARY KEY,
-   invoiceNo INT,
+   invoiceNo VARCHAR(10),
    StockCode VARCHAR(20),
    Description VARCHAR(70),
    Quantity INT,
