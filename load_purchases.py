@@ -22,7 +22,6 @@ default_args = {
 dag = DAG('load_purchases_new', default_args = default_args, schedule_interval = '@daily')
 
 create_table_cmd = """
-DROP TABLE user_purchases;
 CREATE TABLE IF NOT EXISTS user_purchases (
    purchaseId SERIAL PRIMARY KEY,
    invoiceNo VARCHAR(10),
