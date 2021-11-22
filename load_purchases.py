@@ -97,7 +97,7 @@ def locate_file():
                         )
     # Reformat df
     df_products = df_products.replace(r"[\"]", r"'")
-    df_products['CustomerID'] = df_products['CustomerID'].fillna(0)
+    df_products['CustomerID'] = df_products['CustomerID'].fillna("")
     df_products['Description'] = df_products['Description'].fillna("")
     list_df_products = df_products.values.tolist()
     list_df_products = [tuple(x) for x in list_df_products]
