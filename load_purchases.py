@@ -97,10 +97,10 @@ def locate_file():
                         )
     # Reformat df
     df_products = df_products.replace(r"[\"]", r"'")
+    df_products['CustomerID'] = df_products['CustomerID'].fillna(0)
+    df_products['Description'] = df_products['Description'].fillna("")
     list_df_products = df_products.values.tolist()
     list_df_products = [tuple(x) for x in list_df_products]
-    list_df_products['CustomerID'] = list_df_products['CustomerID'].fillna(0)
-    list_df_products['Description'] = list_df_products['Description'].fillna("")
     current_table = "user_purchases"
 
     #Insert rows
