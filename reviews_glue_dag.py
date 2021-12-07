@@ -28,10 +28,10 @@ def create_glue_job():
 s3_path = 's3://deb-capstone/reviews_transform.py'
 iam_role  = "glue_job_role"
 glue_args = {
-    'WorkerType': "G.1X",
+    'GlueVersion':"3.0", 
     'NumberOfWorkers': 2, 
-    'Timeout':3,
-    'GlueVersion':"3.0" 
+    'WorkerType': "G.1X",
+    'Timeout':3    
     }
 aws_conn_id = 'aws_s3_default'
 
