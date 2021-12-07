@@ -27,16 +27,16 @@ def create_glue_job():
 
 s3_path = 's3://deb-capstone/reviews_transform.py'
 iam_role  = "glue_job_role"
-glue_args = {
-    'MaxRetries':'1',
+#glue_args = 
+aws_conn_id = 'aws_s3_default'
+
+glue_job = AwsGlueJobOperator(script_location=s3_path, script_args={
+    'MaxRetries':0,
     'WorkerType': "G.1X",
     'NumberOfWorkers': 2, 
     'Timeout':3,
     'GlueVersion':"3.0" 
-    }
-aws_conn_id = 'aws_s3_default'
-
-glue_job = AwsGlueJobOperator(script_location=s3_path, script_args=glue_args,
+    },
                                  iam_role_name=iam_role, region_name="us-east-2",task_id="glue_task",
                                  dag=dag, aws_conn_id=aws_conn_id, s3_bucket="s3://aws-glue-assets-921884731971-us-east-2/")
 
