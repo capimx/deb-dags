@@ -3,7 +3,7 @@ from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.operators.dummy import DummyOperator
 from airflow.operators.python_operator import PythonOperator
-from airflow.providers.amazon.aws.operators.glue import AwsGlueJobHook
+from airflow.providers.amazon.aws.operators.glue import AwsGlueJobOperator
 import airflow.utils.dates
 import logging
 
@@ -24,15 +24,15 @@ dag = DAG('reviews_etl', default_args = default_args, schedule_interval = '@dail
 
 def create_glue_job():
     s3_path = 's3://deb-capstone/reviews_transform.py'
-    iam_role_name  = "glue_job_role"
+    iam_role  = "glue_job_role"
     glue_args = {"MaxRetries" :  0,
             "WorkerType": "G.1X",
             "NumberOfWorkers": 2, 
             "Timeout":3,
             "GlueVersion":"3.0" }
-    glue_hook = AwsGlueJobHook(script_location=s3_path, create_job_kwargs=glue_args,
-                                 iam_role_name=iam_role_name)
-   
+    glue_hook = AwsGlueJobOperator(script_location=s3_path, script_args=glue_args,
+                                 iam_role_name=iam_role, region="us-east-2")
+    glue_hook
     return
 
 
