@@ -31,7 +31,8 @@ def create_glue_job():
             "Timeout":3,
             "GlueVersion":"3.0" }
     glue_hook = AwsGlueJobOperator(script_location=s3_path, script_args=glue_args,
-                                 iam_role_name=iam_role, region="us-east-2")
+                                 iam_role_name=iam_role, region="us-east-2",task_id="glue_task",
+                                 dag=dag)
     glue_hook
     return
 
