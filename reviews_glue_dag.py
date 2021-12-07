@@ -31,7 +31,6 @@ iam_role  = "glue_job_role"
 aws_conn_id = 'aws_s3_default'
 
 glue_job = AwsGlueJobOperator(script_location=s3_path, script_args={
-    #'MaxRetries':0,
     'WorkerType': "G.1X",
     'NumberOfWorkers': 2, 
     'Timeout':3,
