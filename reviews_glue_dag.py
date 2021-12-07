@@ -29,7 +29,11 @@ s3_path = 's3://deb-capstone/reviews_transform.py'
 iam_role  = "glue_job_role"
 glue_args = {
     'GlueVersion':"3.0", 
-    'Timeout':3    
+    'Timeout':3
+    # Check why these are not working properly. It thinks I'm setting the AllocatedCapacity
+    # This are needed to decrease cost, I think (2 vs. 6 DPUs)
+    #'WorkerType': "G.1X",
+    # 'NumberOfWorkers': 2, 
     }
 aws_conn_id = 'aws_s3_default'
 
@@ -45,9 +49,6 @@ create_glue_job_task = PythonOperator (
     dag=dag
 )
 
-#create_table_task = PythonOperator() #ToDo finish this.
-
 end_task   = DummyOperator(task_id="end", dag=dag)
-
 
 start_task >> glue_job >> end_task
