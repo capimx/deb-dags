@@ -28,7 +28,7 @@ def create_glue_job():
 s3_path = 's3://deb-capstone/reviews_transform.py'
 iam_role  = "glue_job_role"
 glue_args = {
-    'MaxRetries':'0',
+    'MaxRetries':'1',
     'WorkerType': "G.1X",
     'NumberOfWorkers': 2, 
     'Timeout':3,
