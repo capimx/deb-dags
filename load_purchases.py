@@ -40,7 +40,7 @@ def locate_file():
     task_id = 'dag_s3_to_postgres'
     schema = 'bootcampdb'
     table= 'user_purchases'
-    s3_bucket = 'deb-capstone'
+    s3_bucket = 'deb-bronze'
     s3_key =  'user_purchase.csv'
     aws_conn_postgres_id = 'postgres_default'
     aws_conn_id = 'aws_s3_default'
