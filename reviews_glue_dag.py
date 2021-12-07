@@ -32,10 +32,11 @@ glue_args = {"MaxRetries" :  0,
             "NumberOfWorkers": 2, 
             "Timeout":3,
             "GlueVersion":"3.0" }
+aws_conn_id = 'aws_s3_default'
 
 glue_job = AwsGlueJobOperator(script_location=s3_path, script_args=glue_args,
                                  iam_role_name=iam_role, region_name="us-east-2",task_id="glue_task",
-                                 dag=dag)
+                                 dag=dag, aws_conn_id=aws_conn_id)
 
 start_task = DummyOperator(task_id="start", dag=dag)
 
