@@ -35,7 +35,7 @@ glue_args = {
     }
 aws_conn_id = 'aws_s3_default'
 
-glue_job = AwsGlueJobOperator(script_location=s3_path, script_args= glue_args,
+glue_job = AwsGlueJobOperator(script_location=s3_path, create_job_kwargs = glue_args,
                                  iam_role_name=iam_role, region_name="us-east-2",task_id="glue_task", retry_limit=0,
                                  dag=dag, aws_conn_id=aws_conn_id, s3_bucket="s3://aws-glue-assets-921884731971-us-east-2/")
 
