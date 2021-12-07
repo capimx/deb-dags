@@ -30,7 +30,7 @@ def create_glue_job():
             "NumberOfWorkers": 2, 
             "Timeout":3,
             "GlueVersion":"3.0" }
-    glue_hook = AwsGlueJobHook(script_location=s3_path, kwargs=glue_args,
+    glue_hook = AwsGlueJobHook(script_location=s3_path, create_job_kwargs=glue_args,
                                  iam_role_name=iam_role_name)
    
     return
