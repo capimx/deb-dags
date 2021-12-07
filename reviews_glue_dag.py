@@ -23,19 +23,19 @@ default_args = {
 dag = DAG('reviews_etl', default_args = default_args, schedule_interval = '@daily')
 
 def create_glue_job():
-    s3_path = 's3://deb-capstone/reviews_transform.py'
-    iam_role  = "glue_job_role"
-    glue_args = {"MaxRetries" :  0,
+    return
+
+s3_path = 's3://deb-capstone/reviews_transform.py'
+iam_role  = "glue_job_role"
+glue_args = {"MaxRetries" :  0,
             "WorkerType": "G.1X",
             "NumberOfWorkers": 2, 
             "Timeout":3,
             "GlueVersion":"3.0" }
-    glue_hook = AwsGlueJobOperator(script_location=s3_path, script_args=glue_args,
+
+glue_job = AwsGlueJobOperator(script_location=s3_path, script_args=glue_args,
                                  iam_role_name=iam_role, region_name="us-east-2",task_id="glue_task",
                                  dag=dag)
-    glue_hook
-    return
-
 
 start_task = DummyOperator(task_id="start", dag=dag)
 
@@ -50,4 +50,4 @@ create_glue_job_task = PythonOperator (
 end_task   = DummyOperator(task_id="end", dag=dag)
 
 
-start_task >> create_glue_job_task >> end_task
+start_task >> glue_job >> end_task
