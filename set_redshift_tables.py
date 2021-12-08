@@ -83,21 +83,25 @@ def run_queries():
     logging.info(aws_conn_postgres_id)   
     pg_hook = PostgresHook(postgre_conn_id = aws_conn_postgres_id)
 
-    # Locate file
-    
-    # Create table
+    logging.info("Create main schema")   
     pg_hook.run(create_main_schema)
-    #curr = pg_hook.get_conn().cursor()
+    
+    logging.info("Create external reference to movie reviews bucket")   
+    pg_hook.run(create_reviews_external)
+    
+    logging.info("Create external reference to purchases DB")   
+    pg_hook.run(create_purchases_external)
+    
+    logging.info("Create main schema")   
+    pg_hook.run(user_behavior_insert_query)
 
-    # 
- 
 
 
 start_task = DummyOperator(task_id="start", dag=dag)
 
-locate_file_task = PythonOperator (
-    task_id='locate_file',
-    python_callable=locate_file, 
+run_queries_task = PythonOperator (
+    task_id='run_queries_task',
+    python_callable=run_queries, 
     dag=dag
 )
 
@@ -106,4 +110,4 @@ locate_file_task = PythonOperator (
 end_task   = DummyOperator(task_id="end", dag=dag)
 
 
-start_task >> locate_file_task >> end_task
+start_task >> run_queries_task >> end_task
