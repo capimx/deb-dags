@@ -82,18 +82,22 @@ def run_queries():
     # Create instances for hooks        
     logging.info(aws_conn_postgres_id)   
     pg_hook = PostgresHook(postgre_conn_id = aws_conn_postgres_id, autocommit = True)
+    conn = pg_hook.get_conn()
+    cursor =  conn.cursor()
+
 
     logging.info("Create main schema")   
-    pg_hook.run(create_main_schema)
-    
+    cursor.execute(create_main_schema)
+    cursor.close()
+    conn.close()
     logging.info("Create external reference to movie reviews bucket")   
-    pg_hook.run(create_reviews_external)
+    #pg_hook.run(create_reviews_external)
     
     logging.info("Create external reference to purchases DB")   
-    pg_hook.run(create_purchases_external)
+    #pg_hook.run(create_purchases_external)
     
     logging.info("Create main schema")   
-    pg_hook.run(user_behavior_insert_query)
+    #pg_hook.run(user_behavior_insert_query)
 
 
 
