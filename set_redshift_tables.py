@@ -22,6 +22,7 @@ default_args = {
 dag = DAG('set_redshift_tables', default_args = default_args, schedule_interval = '@daily')
 
 create_main_schema = """
+set autocommit=on;
 drop schema if exists movies_schema;
 create external schema movies_schema 
 from data catalog 
