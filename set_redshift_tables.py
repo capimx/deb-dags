@@ -22,7 +22,6 @@ default_args = {
 dag = DAG('set_redshift_tables', default_args = default_args, schedule_interval = '@daily')
 
 create_main_schema = """
-set autocommit=on;
 drop schema if exists movies_schema;
 create external schema movies_schema 
 from data catalog 
@@ -82,7 +81,7 @@ def run_queries():
 
     # Create instances for hooks        
     logging.info(aws_conn_postgres_id)   
-    pg_hook = PostgresHook(postgre_conn_id = aws_conn_postgres_id)
+    pg_hook = PostgresHook(postgre_conn_id = aws_conn_postgres_id, autocommit = True)
 
     logging.info("Create main schema")   
     pg_hook.run(create_main_schema)
