@@ -5,6 +5,7 @@ from airflow.operators.dummy import DummyOperator
 from airflow.operators.python_operator import PythonOperator
 import airflow.utils.dates
 import logging
+from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
 # The DAG object; we'll need this to instantiate a DAG
 from airflow import DAG
@@ -81,8 +82,9 @@ def run_queries():
 
     # Create instances for hooks        
     logging.info(aws_conn_postgres_id)   
-    pg_hook = PostgresHook(postgre_conn_id = aws_conn_postgres_id, autocommit = True)
+    pg_hook = PostgresHook(postgre_conn_id = aws_conn_postgres_id)
     conn = pg_hook.get_conn()
+    conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
     cursor =  conn.cursor()
 
 
