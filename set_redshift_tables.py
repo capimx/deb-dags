@@ -23,7 +23,6 @@ default_args = {
 dag = DAG('set_redshift_tables', default_args = default_args, schedule_interval = '@daily')
 
 create_main_schema = """
-drop schema if exists movies_schema;
 create external schema movies_schema 
 from data catalog 
 database 'movies_db' 
@@ -86,7 +85,6 @@ def run_queries():
     conn = pg_hook.get_conn()
     conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
     cursor =  conn.cursor()
-
 
     logging.info("Create main schema")   
     cursor.execute(create_main_schema)
