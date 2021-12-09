@@ -19,7 +19,8 @@ default_args = {
     'start_date': airflow.utils.dates.days_ago(1)
 }
 
-dag = DAG('load_purchases_new', default_args = default_args, schedule_interval = '@daily')
+dag = DAG('load_purchases', default_args = default_args, schedule_interval = '@daily')
+aws_conn_postgres_id = 'postgres_default'
 
 create_table_cmd = """
 DROP TABLE IF EXISTS user_purchases;
@@ -35,14 +36,25 @@ CREATE TABLE IF NOT EXISTS user_purchases (
    Country VARCHAR(30)
 );"""
 
-def locate_file():
+
+create_materialized_view = """
+CREATE MATERIALIZED VIEW valid_purchases
+AS 
+  SELECT quantity, unitprice, customerid FROM user_purchases
+  WHERE customerid IS NOT NULL 
+  AND LEN(customerid) > 0
+  AND quantity  > 0
+  AND unitprice > 0
+  WITH DATA;
+"""
+
+def load_data():
     
     task_id = 'dag_s3_to_postgres'
     schema = 'bootcampdb'
     table= 'user_purchases'
     s3_bucket = 'deb-bronze'
-    s3_key =  'user_purchase.csv'
-    aws_conn_postgres_id = 'postgres_default'
+    s3_key =  'user_purchase.csv'    
     aws_conn_id = 'aws_s3_default'
 
     # Create instances for hooks        
@@ -114,17 +126,30 @@ def locate_file():
     print("Finish")   
 
 
+def create_mat_view():
+    pg_hook = PostgresHook(postgre_conn_id = aws_conn_postgres_id)
+    pg_hook.run(create_materialized_view)
+    return
+
+
 start_task = DummyOperator(task_id="start", dag=dag)
 
-locate_file_task = PythonOperator (
-    task_id='locate_file',
-    python_callable=locate_file, 
+load_data_task = PythonOperator (
+    task_id='load_data',
+    python_callable=load_data, 
     dag=dag
 )
+
+create_mat_view_task = PythonOperator (
+    task_id='create_mat_view',
+    python_callable=create_mat_view, 
+    dag=dag
+)
+
 
 #create_table_task = PythonOperator() #ToDo finish this.
 
 end_task   = DummyOperator(task_id="end", dag=dag)
 
 
-start_task >> locate_file_task >> end_task
+start_task >> load_data_task >> create_mat_view_task >> end_task
