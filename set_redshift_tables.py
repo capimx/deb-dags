@@ -1,6 +1,7 @@
 import io
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 from airflow.providers.postgres.hooks.postgres import PostgresHook
+from airflow.providers.odbc.hooks.odbc import OdbcHook
 from airflow.operators.dummy import DummyOperator
 from airflow.operators.python_operator import PythonOperator
 import airflow.utils.dates
@@ -78,18 +79,22 @@ def run_queries():
     s3_bucket = 'deb-bronze'
     s3_key =  'user_purchase.csv'
     aws_conn_postgres_id = 'redshift_pg'
+    aws_conn_odbc_id = 'redshift_odbc'
 
     # Create instances for hooks        
     logging.info(aws_conn_postgres_id)   
-    pg_hook = PostgresHook(postgre_conn_id = aws_conn_postgres_id)
-    conn = pg_hook.get_conn()
-    conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-    cursor =  conn.cursor()
+    #pg_hook = PostgresHook(postgre_conn_id = aws_conn_postgres_id)
+    odbc_hook = OdbcHook(conn_name_attr = aws_conn_odbc_id)
+    #conn = pg_hook.get_conn()
+    #conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+    #cursor =  conn.cursor()
 
     logging.info("Create main schema")   
-    cursor.execute(create_main_schema)
-    cursor.close()
-    conn.close()
+    #cursor.execute(create_main_schema)
+    #cursor.close()
+    #conn.close()
+    odbc_hook.run(create_main_schema)
+    
     logging.info("Create external reference to movie reviews bucket")   
     #pg_hook.run(create_reviews_external)
     
