@@ -1,12 +1,9 @@
 import io
-from airflow.providers.amazon.aws.hooks.s3 import S3Hook
-from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.providers.odbc.hooks.odbc import OdbcHook
 from airflow.operators.dummy import DummyOperator
 from airflow.operators.python_operator import PythonOperator
 import airflow.utils.dates
 import logging
-from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
 # The DAG object; we'll need this to instantiate a DAG
 from airflow import DAG
@@ -74,36 +71,22 @@ INSERT INTO user_behavior_metric(
 def run_queries():
     
     task_id = 'run_queries'
-    schema = 'bootcampdb'
-    table= 'user_purchases'
-    s3_bucket = 'deb-bronze'
-    s3_key =  'user_purchase.csv'
-    aws_conn_postgres_id = 'redshift_pg'
     aws_conn_odbc_id = 'redshift_odbc'
 
     # Create instances for hooks        
-    logging.info(aws_conn_postgres_id)   
-    #pg_hook = PostgresHook(postgre_conn_id = aws_conn_postgres_id)
     odbc_hook = OdbcHook(conn_name_attr = aws_conn_odbc_id)
-    #conn = pg_hook.get_conn()
-    #conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-    #cursor =  conn.cursor()
 
     logging.info("Create main schema")   
-    #cursor.execute(create_main_schema)
-    #cursor.close()
-    #conn.close()
     odbc_hook.run(create_main_schema)
-    
+
     logging.info("Create external reference to movie reviews bucket")   
-    #pg_hook.run(create_reviews_external)
+    odbc_hook.run(create_reviews_external)
     
     logging.info("Create external reference to purchases DB")   
-    #pg_hook.run(create_purchases_external)
+    odbc_hook.run(create_purchases_external)
     
     logging.info("Create main schema")   
-    #pg_hook.run(user_behavior_insert_query)
-
+    odbc_hook.run(user_behavior_insert_query)
 
 
 start_task = DummyOperator(task_id="start", dag=dag)
@@ -114,9 +97,6 @@ run_queries_task = PythonOperator (
     dag=dag
 )
 
-#create_table_task = PythonOperator() #ToDo finish this.
-
 end_task   = DummyOperator(task_id="end", dag=dag)
-
 
 start_task >> run_queries_task >> end_task
