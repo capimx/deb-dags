@@ -38,11 +38,12 @@ CREATE TABLE IF NOT EXISTS user_purchases (
 
 
 create_materialized_view = """
+DROP MATERIALIZED IF EXISTS VIEW valid_purchases;
 CREATE MATERIALIZED VIEW valid_purchases
 AS 
   SELECT quantity, unitprice, customerid FROM user_purchases
   WHERE customerid IS NOT NULL 
-  AND LEN(customerid) > 0
+  AND length(customerid) > 0
   AND quantity  > 0
   AND unitprice > 0
   WITH DATA;
